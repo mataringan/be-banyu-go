@@ -1,0 +1,22 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const apiRouters = require("./src/routes/index");
+
+const app = express();
+app.use(bodyParser.json());
+app.use("/", apiRouters);
+mongoose.set("strictQuery", false);
+mongoose
+    .connect(
+        "mongodb+srv://taofikarianto:kurakura@banyugo.tlfch7z.mongodb.net/banyugo?retryWrites=true&w=majority",
+        {
+            useNewUrlParser: true,
+        }
+    )
+    .then(() => {
+        app.listen(9000, () => {
+            console.log("Connection Success");
+        });
+    })
+    .catch((err) => console.log(err));
