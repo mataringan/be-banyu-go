@@ -9,6 +9,11 @@ const {
     whoami,
 } = require("../controllers/authController");
 const { authorize } = require("../middleware/authorize");
+const validator = require("../middleware/validation");
+const {
+    createDestination,
+    getDestinationById,
+} = require("../controllers/destinationController");
 
 const router = express.Router();
 
@@ -25,5 +30,9 @@ router.post("/resend-otp", resendOTP);
 router.post("/login", login);
 
 router.get("/whoami", authorize, whoami);
+
+router.post("/destination", validator, authorize, createDestination);
+
+router.get("/destination/:_id", getDestinationById);
 
 module.exports = router;

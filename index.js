@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const path = require("path");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
+const seedData = require("./seedData");
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,6 +28,7 @@ mongoose
         }
     )
     .then(() => {
+        seedData();
         app.listen(9000, () => {
             console.log("Connection Success");
         });
