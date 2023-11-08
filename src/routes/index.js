@@ -13,6 +13,9 @@ const validator = require("../middleware/validation");
 const {
     createDestination,
     getDestinationById,
+    getDestinationByQuery,
+    updateDestination,
+    deleteDestination,
 } = require("../controllers/destinationController");
 
 const router = express.Router();
@@ -33,6 +36,12 @@ router.get("/whoami", authorize, whoami);
 
 router.post("/destination", validator, authorize, createDestination);
 
+router.get("/destination", getDestinationByQuery);
+
 router.get("/destination/:_id", getDestinationById);
+
+router.put("/destination/:_id", validator, authorize, updateDestination);
+
+router.delete("/destination/:_id", authorize, deleteDestination);
 
 module.exports = router;

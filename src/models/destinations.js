@@ -9,35 +9,39 @@ const Destination = new Schema({
     },
     title: {
         type: String,
-        required: true,
+        required: false,
     },
     address: {
         type: String,
-        required: true,
+        required: false,
     },
     image: {
         type: String,
-        required: true,
+        required: false,
+    },
+    quota: {
+        type: Number,
+        required: false,
     },
     description: {
         type: String,
-        required: true,
+        required: false,
     },
     openingTime: {
         type: Date,
-        required: true,
+        required: false,
     },
     closingTime: {
         type: Date,
-        required: true,
+        required: false,
     },
     status: {
         type: String,
-        required: true,
+        required: false,
     },
     ticketPrice: {
         type: Number,
-        required: true,
+        required: false,
     },
 });
 
