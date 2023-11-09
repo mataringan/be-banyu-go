@@ -19,10 +19,6 @@ const seedData = async () => {
 
                 await User.create(userData);
                 console.log(`Data berhasil diimpor: ${userData._id}`);
-            } else {
-                console.log(
-                    `Data dengan _id ${userData._id} sudah ada, dilewati.`
-                );
             }
         }
 
