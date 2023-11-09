@@ -7,7 +7,7 @@ const Destination = new Schema({
         type: String,
         default: uuidv4,
     },
-    title: {
+    name: {
         type: String,
         required: false,
     },

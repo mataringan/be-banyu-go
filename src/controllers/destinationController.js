@@ -6,7 +6,7 @@ const moment = require("moment");
 module.exports = {
     async createDestination(req, res) {
         const {
-            title,
+            name,
             address,
             description,
             openingTime,
@@ -46,7 +46,7 @@ module.exports = {
                         }
                         Destination.create({
                             _id: uuid(),
-                            title,
+                            name,
                             description,
                             address,
                             openingTime,
@@ -101,7 +101,7 @@ module.exports = {
 
     async getDestinationByQuery(req, res) {
         try {
-            const title = req.query.name ? req.query.name : "";
+            const name = req.query.name ? req.query.name : "";
             const status = req.query.status ? req.query.status : "";
             const address = req.query.address ? req.query.address : "";
 
@@ -111,8 +111,8 @@ module.exports = {
 
             const querySearch = {};
 
-            if (title) {
-                querySearch.title = new RegExp(title, "i");
+            if (name) {
+                querySearch.name = new RegExp(name, "i");
             }
             if (status) {
                 querySearch.status = new RegExp(status, "i");
@@ -147,7 +147,7 @@ module.exports = {
     async updateDestination(req, res) {
         try {
             const {
-                title,
+                name,
                 address,
                 description,
                 openingTime,
@@ -193,7 +193,7 @@ module.exports = {
                             });
                         }
                         // update destination
-                        destination.title = title;
+                        destination.name = name;
                         destination.address = address;
                         destination.description = description;
                         destination.openingTime = openingTime;
@@ -212,7 +212,7 @@ module.exports = {
                     }
                 );
             } else {
-                destination.title = title;
+                destination.name = name;
                 destination.address = address;
                 destination.description = description;
                 destination.openingTime = openingTime;
