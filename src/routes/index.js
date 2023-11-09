@@ -17,6 +17,19 @@ const {
     updateDestination,
     deleteDestination,
 } = require("../controllers/destinationController");
+const {
+    createInformationDestination,
+    getInformationDestinationById,
+    getAllInformationDestination,
+    updateInformationDestination,
+    deleteInformationDestination,
+} = require("../controllers/informationDestinationController");
+const {
+    createBooking,
+    getBookingEmail,
+    getBookingById,
+} = require("../controllers/bookingController");
+const { getTransactionById } = require("../controllers/transactionController");
 
 const router = express.Router();
 
@@ -43,5 +56,35 @@ router.get("/destination/:_id", getDestinationById);
 router.put("/destination/:_id", validator, authorize, updateDestination);
 
 router.delete("/destination/:_id", authorize, deleteDestination);
+
+router.post(
+    "/information-destination",
+    authorize,
+    createInformationDestination
+);
+
+router.get("/information-destination/:id", getInformationDestinationById);
+
+router.get("/information-destination", getAllInformationDestination);
+
+router.put(
+    "/information-destination/:id",
+    authorize,
+    updateInformationDestination
+);
+
+router.delete(
+    "/information-destination/:id",
+    authorize,
+    deleteInformationDestination
+);
+
+router.post("/booking", authorize, createBooking);
+
+router.post("/email-booking", authorize, getBookingEmail);
+
+// router.get("/booking/:_id", authorize, getBookingById);
+
+router.get("/transaction/:id", authorize, getTransactionById);
 
 module.exports = router;
