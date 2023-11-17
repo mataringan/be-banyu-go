@@ -8,7 +8,7 @@ module.exports = {
             const { idDestination, title, description, date } = req.body;
 
             if (req.user.role !== "admin" && req.user.role !== "super admin") {
-                return res.status(400).json({
+                return res.status(403).json({
                     status: "error",
                     message: "only admin can create information destination",
                 });
@@ -91,7 +91,7 @@ module.exports = {
             const destination = await InformationDestination.findOne({ _id });
 
             if (req.user.role !== "admin" && req.user.role !== "super admin") {
-                return res.status(400).json({
+                return res.status(403).json({
                     status: "errpr",
                     message:
                         "only admin or super admin can update information destination",
@@ -129,7 +129,7 @@ module.exports = {
             const _id = req.params.id;
 
             if (req.user.role !== "admin" && req.user.role !== "super admin") {
-                return res.status(400).json({
+                return res.status(403).json({
                     status: "error",
                     message:
                         "only admin or super admin can delete information destination",
