@@ -12,6 +12,11 @@ const Transaction = new Schema({
         default: uuidv4,
         ref: "User",
     },
+    idAdmin: {
+        type: String,
+        default: uuidv4,
+        ref: "User",
+    },
     idBooking: {
         type: String,
         default: uuidv4,
@@ -23,7 +28,7 @@ const Transaction = new Schema({
     },
     status: {
         type: String,
-        required: true,
+        required: false,
     },
 });
 
