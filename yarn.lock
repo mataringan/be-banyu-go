@@ -929,6 +929,11 @@ mongodb-connection-string-url@^2.6.0:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^11.0.0"
 
+mongodb-moment@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/mongodb-moment/-/mongodb-moment-1.0.2.tgz#d5741a73cd60fc77d74501e0f19d95050ea92a3e"
+  integrity sha512-3l00AcyUEL/YQDxi2yHgdueBeV1l4O2rqNnkWXZ9/7Iwl8P/VDOXb1BOSb7SKcMWUiZTDWcJNjBUDS7uJsLQPw==
+
 mongodb@6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-6.2.0.tgz#2c9dcb3eeaf528ed850e94b3df392de6c6b0d7ab"
