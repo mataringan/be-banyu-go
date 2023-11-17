@@ -1,7 +1,6 @@
 const { v4: uuid } = require("uuid");
 const Destination = require("../models/destinations");
 const cloudinary = require("../middleware/cloudinary");
-const moment = require("moment");
 
 module.exports = {
     async createDestination(req, res) {
@@ -17,7 +16,12 @@ module.exports = {
         } = req.body;
 
         try {
-            if (req.user.role !== "admin" && req.user.role !== "super admin") {
+            const idOfficer = req.user._id;
+
+            const isAdmin =
+                req.user.role && req.user.role.toLowerCase().includes("admin");
+            // if (req.user.role !== "admin" && req.user.role !== "super admin") {
+            if (!isAdmin) {
                 return res.status(403).json({
                     status: "error",
                     message: "only admin or super admin can create destination",
@@ -44,8 +48,10 @@ module.exports = {
                                 message: err.message,
                             });
                         }
+
                         Destination.create({
                             _id: uuid(),
+                            officer: idOfficer,
                             name,
                             description,
                             address,
@@ -80,9 +86,28 @@ module.exports = {
         }
     },
 
+    async getDestinationByOfficer(req, res) {
+        try {
+            const _id = req.user.id;
+
+            const destination = await Destination.find({ officer: _id });
+
+            res.status(200).json({
+                status: "success",
+                message: "get data destination by officer successfully",
+                data: destination,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                status: "error",
+                message: error.message,
+            });
+        }
+    },
+
     async getDestinationById(req, res) {
         try {
-            const _id = req.params._id;
+            const _id = req.params.id;
 
             const destination = await Destination.findOne({ _id });
 
@@ -122,11 +147,12 @@ module.exports = {
             }
 
             if (openingTime) {
-                const startDate = new Date(openingTime);
-                const endDate = new Date(openingTime);
-                endDate.setDate(startDate.getDate() + 1); // Set the end date to the next day
+                const searchDate = new Date(openingTime); // Tanggal pencarian di zona waktu UTC
 
-                querySearch.openingTime = { $gte: startDate, $lt: endDate }; // Use $lt to exclude the next day
+                querySearch.openingTime = {
+                    $gte: searchDate,
+                    $lt: new Date(searchDate.getTime() + 24 * 60 * 60 * 1000),
+                };
             }
 
             const destinations = await Destination.find(querySearch);
@@ -164,7 +190,7 @@ module.exports = {
                 });
             }
 
-            const _id = req.params._id;
+            const _id = req.params.id;
 
             const destination = await Destination.findOne({ _id });
 
@@ -244,7 +270,7 @@ module.exports = {
                     message: "only admin or super admin can delete destination",
                 });
             }
-            const _id = req.params._id;
+            const _id = req.params.id;
 
             const destination = await Destination.findByIdAndDelete({
                 _id,
