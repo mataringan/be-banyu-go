@@ -16,6 +16,7 @@ const {
     getDestinationByQuery,
     updateDestination,
     deleteDestination,
+    getDestinationByOfficer,
 } = require("../controllers/destinationController");
 const {
     createInformationDestination,
@@ -29,7 +30,24 @@ const {
     getBookingEmail,
     getBookingById,
 } = require("../controllers/bookingController");
-const { getTransactionById } = require("../controllers/transactionController");
+const {
+    getTransactionById,
+    updateStatusTransaction,
+    getAllTransaction,
+    updateTransaction,
+    getTransactionEmail,
+    deleteTransaction,
+    getAllTransactionAdmin,
+    getAllTransactionAdminUnVerifikasi,
+} = require("../controllers/transactionController");
+const {
+    createUser,
+    getUserByQuery,
+    getUserById,
+    updateUser,
+    updateUserWithToken,
+    deletUser,
+} = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -39,9 +57,21 @@ router.post("/register", register);
 
 router.post("/register-admin", authorize, registerAdmin);
 
+router.post("/register-user", authorize, createUser);
+
 router.put("/verify-user", verifyUser);
 
 router.post("/resend-otp", resendOTP);
+
+router.get("/user", authorize, getUserByQuery);
+
+router.get("/user/:id", authorize, getUserById);
+
+router.put("/user/:id", authorize, updateUser);
+
+router.put("/user", validator, authorize, updateUserWithToken);
+
+router.delete("/user/:id", authorize, deletUser);
 
 router.post("/login", login);
 
@@ -51,11 +81,13 @@ router.post("/destination", validator, authorize, createDestination);
 
 router.get("/destination", getDestinationByQuery);
 
-router.get("/destination/:_id", getDestinationById);
+router.get("/destination-admin", authorize, getDestinationByOfficer);
 
-router.put("/destination/:_id", validator, authorize, updateDestination);
+router.get("/destination/:id", getDestinationById);
 
-router.delete("/destination/:_id", authorize, deleteDestination);
+router.put("/destination/:id", validator, authorize, updateDestination);
+
+router.delete("/destination/:id", authorize, deleteDestination);
 
 router.post(
     "/information-destination",
@@ -79,12 +111,30 @@ router.delete(
     deleteInformationDestination
 );
 
-router.post("/booking", authorize, createBooking);
+router.post("/booking", validator, authorize, createBooking);
 
-router.post("/email-booking", authorize, getBookingEmail);
+// router.post("/email-booking", authorize, getBookingEmail);
 
 // router.get("/booking/:_id", authorize, getBookingById);
 
+router.get("/transaction", authorize, getAllTransaction);
+
 router.get("/transaction/:id", authorize, getTransactionById);
+
+router.get("/transaction-admin", authorize, getAllTransactionAdmin);
+
+router.get(
+    "/transaction-admin-unverifikasi",
+    authorize,
+    getAllTransactionAdminUnVerifikasi
+);
+
+router.post("/email-transaction", authorize, getTransactionEmail);
+
+router.put("/transaction/:id", authorize, updateTransaction);
+
+router.put("/transaction-status", authorize, updateStatusTransaction);
+
+router.delete("/transaction/:id", authorize, deleteTransaction);
 
 module.exports = router;
