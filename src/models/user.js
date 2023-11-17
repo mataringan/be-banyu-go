@@ -31,6 +31,10 @@ const User = new Schema({
         type: String,
         required: true,
     },
+    placement: {
+        type: String,
+        required: false,
+    },
     image: {
         type: String,
         required: true,
