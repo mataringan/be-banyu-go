@@ -1,16 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { v4: uuidv4 } = require("uuidv4");
+const moment = require("moment-timezone");
 
 const Booking = new Schema({
     _id: {
         type: String,
         default: uuidv4,
-    },
-    idUser: {
-        type: String,
-        default: uuidv4,
-        ref: "User",
     },
     idDestination: {
         type: String,
@@ -19,27 +15,33 @@ const Booking = new Schema({
     },
     name: {
         type: String,
-        required: true,
+        required: false,
     },
     date: {
         type: Date,
-        default: Date.now,
+        required: false,
+        // ref: "Destination",
+        get: (val) => moment(val).tz("Asia/Jakarta").format(),
+    },
+    image: {
+        type: String,
+        required: false,
     },
     citizenship: {
         type: String,
-        required: true,
+        required: false,
     },
     phone: {
         type: String,
-        required: true,
+        required: false,
     },
     email: {
         type: String,
-        required: true,
+        required: false,
     },
     quantity: {
         type: Number,
-        required: true,
+        required: false,
     },
 });
 
