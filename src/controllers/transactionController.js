@@ -141,6 +141,69 @@ module.exports = {
         }
     },
 
+    async getTransactionByUser(req, res) {
+        try {
+            const idUser = req.user._id;
+
+            const transaction = await Transaction.find({ idUser })
+                .populate({
+                    path: "idUser",
+                    select: "name email",
+                })
+                .populate({
+                    path: "idBooking",
+                    select: "name email phone citizenship quantity date",
+                    populate: {
+                        path: "idDestination",
+                        select: "_id name",
+                    },
+                })
+                .select("amount status");
+
+            const formattedData = transaction.map((trans) => ({
+                _id: trans._id,
+                user: trans.idUser
+                    ? {
+                          _id: trans.idUser._id,
+                          name: trans.idUser.name,
+                          email: trans.idUser.email,
+                      }
+                    : null,
+                booking: trans.idBooking
+                    ? {
+                          _id: trans.idBooking._id,
+                          name: trans.idBooking.name,
+                          email: trans.idBooking.email,
+                          phone: trans.idBooking.phone,
+                          quantity: trans.idBooking.quantity,
+                          date: trans.idBooking.date,
+                          citizenship: trans.idBooking.citizenship,
+                          image: trans.idBooking.image,
+                          destination: trans.idBooking.idDestination
+                              ? {
+                                    _id: trans.idBooking.idDestination._id,
+                                    name: trans.idBooking.idDestination.name,
+                                }
+                              : null,
+                      }
+                    : null,
+                amount: trans.amount,
+                status: trans.status,
+            }));
+
+            res.status(200).json({
+                status: "success",
+                message: "get transaction by user successfully",
+                data: formattedData,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                status: "error",
+                message: error.message,
+            });
+        }
+    },
+
     async getAllTransactionAdminUnVerifikasi(req, res) {
         try {
             const idAdmin = req.user._id;

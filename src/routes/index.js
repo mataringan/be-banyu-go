@@ -39,6 +39,7 @@ const {
     deleteTransaction,
     getAllTransactionAdmin,
     getAllTransactionAdminUnVerifikasi,
+    getTransactionByUser,
 } = require("../controllers/transactionController");
 const {
     createUser,
@@ -128,6 +129,8 @@ router.get(
     authorize,
     getAllTransactionAdminUnVerifikasi
 );
+
+router.get("/transaction-user", authorize, getTransactionByUser);
 
 router.post("/email-transaction", authorize, getTransactionEmail);
 
