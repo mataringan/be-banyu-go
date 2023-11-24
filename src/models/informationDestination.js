@@ -10,6 +10,12 @@ const InformationDestination = new Schema({
     idDestination: {
         type: String,
         default: uuidv4,
+        ref: "Destination",
+    },
+    idAdmin: {
+        type: String,
+        default: uuidv4,
+        ref: "User",
     },
     title: {
         type: String,

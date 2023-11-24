@@ -8,6 +8,7 @@ module.exports = {
             name,
             address,
             description,
+            date,
             openingTime,
             closingTime,
             status,
@@ -55,6 +56,7 @@ module.exports = {
                             name,
                             description,
                             address,
+                            date,
                             openingTime,
                             closingTime,
                             status,
@@ -88,6 +90,14 @@ module.exports = {
 
     async getDestinationByOfficer(req, res) {
         try {
+            if (req.user.role !== "admin" && req.user.role !== "super admin") {
+                return res.status(403).json({
+                    status: "forbidden",
+                    message:
+                        "only admin or super admin can access destination by admin",
+                });
+            }
+
             const _id = req.user.id;
 
             const destination = await Destination.find({ officer: _id });
@@ -130,9 +140,7 @@ module.exports = {
             const status = req.query.status ? req.query.status : "";
             const address = req.query.address ? req.query.address : "";
 
-            const openingTime = req.query.openingTime
-                ? req.query.openingTime
-                : "";
+            const date = req.query.date ? req.query.date : "";
 
             const querySearch = {};
 
@@ -146,10 +154,10 @@ module.exports = {
                 querySearch.address = new RegExp(address, "i");
             }
 
-            if (openingTime) {
-                const searchDate = new Date(openingTime); // Tanggal pencarian di zona waktu UTC
+            if (date) {
+                const searchDate = new Date(date); // Tanggal pencarian di zona waktu UTC
 
-                querySearch.openingTime = {
+                querySearch.date = {
                     $gte: searchDate,
                     $lt: new Date(searchDate.getTime() + 24 * 60 * 60 * 1000),
                 };
@@ -176,6 +184,7 @@ module.exports = {
                 name,
                 address,
                 description,
+                date,
                 openingTime,
                 closingTime,
                 status,
@@ -191,6 +200,7 @@ module.exports = {
             }
 
             const _id = req.params.id;
+            const idOfficer = req.user._id;
 
             const destination = await Destination.findOne({ _id });
 
@@ -222,12 +232,14 @@ module.exports = {
                         destination.name = name;
                         destination.address = address;
                         destination.description = description;
+                        destination.date = date;
                         destination.openingTime = openingTime;
                         destination.closingTime = closingTime;
                         destination.status = status;
                         destination.quota = quota;
                         destination.ticketPrice = ticketPrice;
                         destination.image = result.url;
+                        destination.officer = idOfficer;
 
                         await destination.save();
 
@@ -241,11 +253,13 @@ module.exports = {
                 destination.name = name;
                 destination.address = address;
                 destination.description = description;
+                destination.date = date;
                 destination.openingTime = openingTime;
                 destination.closingTime = closingTime;
                 destination.status = status;
                 destination.quota = quota;
                 destination.ticketPrice = ticketPrice;
+                destination.officer = idOfficer;
 
                 await destination.save();
 

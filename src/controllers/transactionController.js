@@ -12,7 +12,55 @@ module.exports = {
                     message: "only super admin can get all transaction",
                 });
             }
-            const transaction = await Transaction.find()
+
+            const name = req.query.name ? req.query.name : "";
+            const status = req.query.status ? req.query.status : "";
+            const date = req.query.date ? req.query.date : "";
+
+            const idAdmin = req.user._id;
+
+            const querySearch = {};
+
+            if (status) {
+                querySearch.status = new RegExp(status, "i");
+            }
+
+            if (name) {
+                const booking = await Booking.findOne({
+                    name: new RegExp(name, "i"),
+                });
+                if (booking) {
+                    querySearch.idBooking = booking._id;
+                } else {
+                    // Don't search by name in the transactions table
+                    querySearch.name = new RegExp(name, "i");
+                }
+            }
+
+            if (date) {
+                const booking = await Booking.findOne({
+                    date: {
+                        $gte: new Date(date),
+                        $lt: new Date(
+                            new Date(date).getTime() + 24 * 60 * 60 * 1000
+                        ),
+                    },
+                });
+
+                if (booking) {
+                    querySearch.idBooking = booking._id;
+                } else {
+                    // Don't search by date in the transactions table
+                    querySearch.date = {
+                        $gte: new Date(date),
+                        $lt: new Date(
+                            new Date(date).getTime() + 24 * 60 * 60 * 1000
+                        ),
+                    };
+                }
+            }
+
+            const transaction = await Transaction.find(querySearch)
                 .populate({
                     path: "idUser",
                     select: "name email",
@@ -73,8 +121,6 @@ module.exports = {
 
     async getAllTransactionAdmin(req, res) {
         try {
-            const idAdmin = req.user._id;
-
             if (req.user.role !== "admin" && req.user.role !== "super admin") {
                 return res.status(403).json({
                     status: "error",
@@ -82,14 +128,67 @@ module.exports = {
                         "only admin or super admin can get all transaction",
                 });
             }
-            const transaction = await Transaction.find({ idAdmin })
+
+            const name = req.query.name ? req.query.name : "";
+            const status = req.query.status ? req.query.status : "";
+            const date = req.query.date ? req.query.date : "";
+
+            const idAdmin = req.user._id;
+
+            const querySearch = {};
+
+            if (status) {
+                querySearch.status = new RegExp(status, "i");
+            }
+
+            if (name) {
+                const booking = await Booking.findOne({
+                    name: new RegExp(name, "i"),
+                });
+                if (booking) {
+                    querySearch.idBooking = booking._id;
+                } else {
+                    // Don't search by name in the transactions table
+                    querySearch.name = new RegExp(name, "i");
+                }
+            }
+
+            if (date) {
+                const booking = await Booking.findOne({
+                    date: {
+                        $gte: new Date(date),
+                        $lt: new Date(
+                            new Date(date).getTime() + 24 * 60 * 60 * 1000
+                        ),
+                    },
+                });
+
+                if (booking) {
+                    querySearch.idBooking = booking._id;
+                } else {
+                    // Don't search by date in the transactions table
+                    querySearch.date = {
+                        $gte: new Date(date),
+                        $lt: new Date(
+                            new Date(date).getTime() + 24 * 60 * 60 * 1000
+                        ),
+                    };
+                }
+            }
+
+            // console.log(querySearch);
+
+            const transaction = await Transaction.find({
+                idAdmin,
+                ...querySearch,
+            })
                 .populate({
                     path: "idUser",
                     select: "name email",
                 })
                 .populate({
                     path: "idBooking",
-                    select: "name email phone citizenship quantity date",
+                    select: "name email phone citizenship quantity date image",
                     populate: {
                         path: "idDestination",
                         select: "_id name",
@@ -145,7 +244,41 @@ module.exports = {
         try {
             const idUser = req.user._id;
 
-            const transaction = await Transaction.find({ idUser })
+            const status = req.query.status ? req.query.status : "";
+            const date = req.query.date ? req.query.date : "";
+
+            const querySearch = {};
+
+            if (status) {
+                querySearch.status = new RegExp(status, "i");
+            }
+
+            if (date) {
+                const booking = await Booking.findOne({
+                    date: {
+                        $gte: new Date(date),
+                        $lt: new Date(
+                            new Date(date).getTime() + 24 * 60 * 60 * 1000
+                        ),
+                    },
+                });
+
+                if (booking) {
+                    querySearch.idBooking = booking._id;
+                } else {
+                    // Don't search by date in the transactions table
+                    querySearch.date = {
+                        $gte: new Date(date),
+                        $lt: new Date(
+                            new Date(date).getTime() + 24 * 60 * 60 * 1000
+                        ),
+                    };
+                }
+            }
+            const transaction = await Transaction.find({
+                idUser,
+                ...querySearch,
+            })
                 .populate({
                     path: "idUser",
                     select: "name email",
@@ -350,7 +483,7 @@ module.exports = {
             });
 
             const utcDate = new Date(booking.date);
-            const utcDateString = utcDate.toUTCString();
+            const utcDateString = utcDate.toLocaleDateString();
 
             const htmlData = `
     <!DOCTYPE html>
@@ -467,7 +600,7 @@ module.exports = {
             await transaction.save();
 
             const utcDate = new Date(booking.date);
-            const utcDateString = utcDate.toUTCString();
+            const utcDateString = utcDate.toLocaleDateString();
 
             const htmlData = `
     <!DOCTYPE html>
@@ -553,8 +686,19 @@ module.exports = {
 
     async updateTransaction(req, res) {
         try {
-            const { idDestination, name, phone, email, quantity, status } =
-                req.body;
+            const {
+                // idDestination,
+                // idUser,
+                // idAdmin,
+                // idBooking,
+                name,
+                phone,
+                date,
+                email,
+                citizenship,
+                quantity,
+                status,
+            } = req.body;
 
             const _id = req.params.id;
 
@@ -565,18 +709,20 @@ module.exports = {
                 });
             }
 
-            const destination = await Destination.findOne({
-                _id: idDestination,
-            });
-
             const transaction = await Transaction.findOne({ _id });
 
             const booking = await Booking.findOne({
                 _id: transaction.idBooking,
             });
 
-            booking.idDestination = idDestination;
-            booking.date = new Date();
+            const destination = await Destination.findOne({
+                _id: booking.idDestination,
+            });
+
+            booking.idDestination = booking.idDestination;
+            // booking.date = new Date();
+            booking.date = date;
+            booking.citizenship = citizenship;
             booking.name = name;
             booking.phone = phone;
             booking.email = email;
@@ -584,6 +730,9 @@ module.exports = {
 
             const totalAmount = quantity * destination.ticketPrice;
 
+            transaction.idUser = transaction.idUser;
+            transaction.idAdmin = transaction.idAdmin;
+            transaction.idBooking = transaction.idBooking;
             transaction.amount = totalAmount;
             transaction.status = status;
 

@@ -28,6 +28,7 @@ module.exports = {
             InformationDestination.create({
                 _id: uuid(),
                 idDestination,
+                idAdmin: destination.officer,
                 title,
                 description,
                 date,
@@ -48,10 +49,10 @@ module.exports = {
 
     async getInformationDestinationById(req, res) {
         try {
-            const idDestination = req.params.id;
+            const _id = req.params.id;
 
             const destination = await InformationDestination.findOne({
-                idDestination,
+                _id,
             });
 
             res.status(200).json({
@@ -84,6 +85,43 @@ module.exports = {
         }
     },
 
+    async getInformationDestinationAdmin(req, res) {
+        try {
+            const idAdmin = req.user._id;
+
+            const informationDestination = await InformationDestination.find({
+                idAdmin,
+            }).populate({
+                path: "idDestination",
+                select: "_id name",
+            });
+
+            const formattedData = informationDestination.map((infor) => ({
+                _id: infor._id,
+                title: infor.title,
+                description: infor.description,
+                date: infor.date,
+                destination: infor.idDestination
+                    ? {
+                          _id: infor.idDestination._id,
+                          name: infor.idDestination.name,
+                      }
+                    : null,
+            }));
+
+            res.status(200).json({
+                status: "success",
+                message: "get all information destination admin successfully",
+                data: formattedData,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                status: "error",
+                message: error.message,
+            });
+        }
+    },
+
     async updateInformationDestination(req, res) {
         try {
             const _id = req.params.id;
@@ -106,6 +144,7 @@ module.exports = {
             }
 
             destination.idDestination = idDestination;
+            destination.idAdmin = destination.idAdmin;
             destination.title = title;
             destination.description = description;
             destination.date = date;

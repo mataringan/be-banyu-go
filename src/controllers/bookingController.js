@@ -60,7 +60,7 @@ module.exports = {
                             idDestination,
                             name,
                             // date: new Date(),
-                            date: destination.openingTime,
+                            date: destination.date,
                             citizenship,
                             email,
                             image: result.url,
@@ -84,7 +84,7 @@ module.exports = {
                         });
 
                         const utcDate = new Date(booking.date);
-                        const utcDateString = utcDate.toUTCString();
+                        const utcDateString = utcDate.toLocaleDateString();
 
                         const htmlData = `
     <!DOCTYPE html>
@@ -180,7 +180,7 @@ module.exports = {
                             idDestination,
                             name,
                             // date: new Date(),
-                            date: destination.openingTime,
+                            date: destination.date,
                             citizenship,
                             email,
                             image: result.url,
@@ -204,7 +204,7 @@ module.exports = {
                         });
 
                         const utcDate = new Date(booking.date);
-                        const utcDateString = utcDate.toUTCString();
+                        const utcDateString = utcDate.toLocaleDateString();
 
                         const htmlData = `
     <!DOCTYPE html>

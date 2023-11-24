@@ -83,7 +83,7 @@ module.exports = {
     async createUser(req, res) {
         try {
             const password = await encryptPassword(req.body.password);
-            const { name, email, phone, placement, role } = req.body;
+            const { name, email, phone, role } = req.body;
 
             if (!email || !password) {
                 return res.status(400).json({
@@ -127,11 +127,10 @@ module.exports = {
                     name,
                     email,
                     phone,
-                    placement,
                     otp,
                     otpExpiration: otpExpiration.toISOString(),
                     verified: false,
-                    role: `admin ${placement}`,
+                    role,
                     password,
                     image: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
                 });
@@ -249,7 +248,7 @@ module.exports = {
     async updateUser(req, res) {
         try {
             const _id = req.params.id;
-            const { name, email, phone, address, role } = req.body;
+            const { name, email, phone, role } = req.body;
             if (req.user.role === "admin" || req.user.role === "super admin") {
                 const user = await User.findOne({
                     _id,
@@ -258,7 +257,6 @@ module.exports = {
                 user.name = name;
                 user.email = email;
                 user.phone = phone;
-                user.address = address;
                 user.role = role;
 
                 await user.save();
@@ -341,7 +339,7 @@ module.exports = {
         }
     },
 
-    async deletUser(req, res) {
+    async deleteUser(req, res) {
         try {
             const _id = req.params.id;
 

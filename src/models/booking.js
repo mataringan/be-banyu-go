@@ -21,7 +21,7 @@ const Booking = new Schema({
         type: Date,
         required: false,
         // ref: "Destination",
-        get: (val) => moment(val).tz("Asia/Jakarta").format(),
+        // get: (val) => moment(val).tz("Asia/Jakarta").format(),
     },
     image: {
         type: String,

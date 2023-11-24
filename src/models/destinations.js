@@ -32,15 +32,17 @@ const Destination = new Schema({
         type: String,
         required: false,
     },
-    openingTime: {
+    date: {
         type: Date,
         required: false,
-        get: (val) => moment(val).tz("Asia/Jakarta").format(),
+    },
+    openingTime: {
+        type: String,
+        required: false,
     },
     closingTime: {
-        type: Date,
+        type: String,
         required: false,
-        get: (val) => moment(val).tz("Asia/Jakarta").format(),
     },
     status: {
         type: String,

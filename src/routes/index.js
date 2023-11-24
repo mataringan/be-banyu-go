@@ -24,6 +24,7 @@ const {
     getAllInformationDestination,
     updateInformationDestination,
     deleteInformationDestination,
+    getInformationDestinationAdmin,
 } = require("../controllers/informationDestinationController");
 const {
     createBooking,
@@ -47,7 +48,7 @@ const {
     getUserById,
     updateUser,
     updateUserWithToken,
-    deletUser,
+    deleteUser,
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -72,7 +73,7 @@ router.put("/user/:id", authorize, updateUser);
 
 router.put("/user", validator, authorize, updateUserWithToken);
 
-router.delete("/user/:id", authorize, deletUser);
+router.delete("/user/:id", authorize, deleteUser);
 
 router.post("/login", login);
 
@@ -99,6 +100,12 @@ router.post(
 router.get("/information-destination/:id", getInformationDestinationById);
 
 router.get("/information-destination", getAllInformationDestination);
+
+router.get(
+    "/information-destination-admin",
+    authorize,
+    getInformationDestinationAdmin
+);
 
 router.put(
     "/information-destination/:id",
